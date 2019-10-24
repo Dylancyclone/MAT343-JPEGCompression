@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}         % What type of document you're writing.
+
+%%%%% Preamble
+
+%% Packages to use
+
+\usepackage[margin=0.75in]{geometry} % Margin size
+\usepackage{amsmath,amsfonts,amssymb}   % AMS mathematics macros
+
+%% Title Information.
+
+\title{\vspace{-1.0cm}JPEG Compression}
+\author{Dylan Lathrum}
+%\date{October 23 2019}           % By default, LaTeX uses the current date
+
+%%%%% The Document
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+[Some fancy opening about how data is integral to the information age]
+As with everything else, data costs money to store and transfer.
+Whether one is looking to store a file on their computer or send an image through the internet, it is often in everyone’s best interest to use as little storage space and bandwidth as possible while still maintaining quality.
+This is achieved through compression, a method of reducing the footprint of data by reducing the number of bits needed to represent the data.
+Compression methods can be divided into two main categories: lossless and lossy.
+Lossless compression is a method where the filesize of the data is reduced without any degradation of the file’s contents; a quality essential to compressing text documents and computer code.
+Lossy compression is a more efficient method to reduce file sizes at greater ratios at the cost of losing some detail in the data; a tradeoff that is more acceptable for images and sounds.
+
+Each compression method has their own use cases; for example, it would be a terrible idea to apply a lossy compression algorithm to an essay as some of the data would be lost or changed in the process, while it is perfectly acceptable to run the same algorithm on an image file where the user can afford to lose some detail.
+In either case, compression is a trade-off. While some storage space or bandwidth may be saved, something else must be lost.
+Whether that be detail in an image, or the processing power required to decompress a file, different algorithms have their strengths and weaknesses.
+
+
+\section{What is JPEG?}
+\label{sec: whatisjpeg}
+
+Specifically, Joint Photographic Experts Group (JPEG) is a lossy compression algorithm that is widely used for images on the Internet.
+The entire process that JPEG uses to compress images will be covered in detail, but one of JPEG’s most predominant features is a variable compression ratio.
+Most compression methods run at predefined or dynamically generated ratios, making it impossible for a user to choose how compressed they want their data to be.
+Because of this, and the algorithm’s efficiency and speed, JPEG has become a standard for digital images.
+
+
+\section{Preprocessing}
+\label{sec: preprocessing}
+
+\section{Transformation}
+\label{sec: transofrmation}
+
+\section{Quantization}
+\label{sec: quantization}
+
+\section{Compression}
+\label{sec: compression}
+
+\section{Decompression}
+\label{sec: decompression}
+
+\section{Conclusion}
+\label{sec: conclusion}
+
+\section{Further Examples}
+\label{sec: furtherexamples}
+
+\bibliographystyle{unsrt}
+%\bibliography{bibliography}
+
+\end{document}
+
