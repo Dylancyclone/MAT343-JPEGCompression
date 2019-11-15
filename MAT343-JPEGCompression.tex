@@ -115,7 +115,7 @@ Now the numbers occupy a range from -127 to 128 inclusive.
 
 Now that the data is in position, calculations can finally be made.
 The JPEG format relies on Discrete Cosine Transformation (DCT), which outputs a matrix of weighted coefficients that can be used to represent the 8x8 set of pixels.
-Each coefficient corresponds to a separate, predefined cosine function is a certain order.
+Each coefficient corresponds to a separate, predefined cosine function in a certain order.
 Figure~\ref{fig:dct} displays the precalculated DCT basis functions as a set of 64 images, and Figure~\ref{fig:dct_order} shows the order that the elements of each 8x8 matrix will be parsed.
 
 \begin{figure}
@@ -152,8 +152,8 @@ Where,
     \frac{1}{\sqrt{2}} & \text{if } u=0 \\ 
     1 &  \text{otherwise}
   \end{matrix}\right. \text{ is a normalizing scale factor to make the result orthonormal} \\
-  &g_{x,y} \text{ is the pixel intensity at the coordinents (x,y)} \\
-  &X_{u,v} \text{ is the DCT coefficient at the coordinents (u,v)} \\
+  &g_{x,y} \text{ is the pixel intensity at the coordinates (x,y)} \\
+  &X_{u,v} \text{ is the DCT coefficient at the coordinates (u,v)} \\
 \end{align*}
 
 This equation is used to fill in a matrix of the same size of the input image chunk.
@@ -173,7 +173,7 @@ In this case, for an 8x8 matrix, the DCT matrix is:
   \end{bmatrix}
 \end{equation}
 
-Now the Discrete Cosine Transformation can be perfomrmed using matrix multiplication:
+Now the Discrete Cosine Transformation can be performed using matrix multiplication:
 
 \begin{equation}
   \label{eqn:transformation}
@@ -201,10 +201,10 @@ This results in the following matrix:
 The matrix now contains 64 DCT coefficients which, if not rounded, could be easily reversed into the original image.
 It is important to note that the larger coefficients are concentrated closer to the top-left corner, representing stronger influence on the basis functions, while the bottom right corner correlates to smaller values.
 Because of the zig-zagging path taken while parsing the data, seen in Figure~\ref{fig:dct_order}, this generally means the absolute values of the data are placed in descending order.
-This corresponds to more data being allocated towards qualities of the images that are more perceptable to the human eye, while smaller minute color differences are given less weight on the basis functions.
+This corresponds to more data being allocated towards qualities of the images that are more perceptible to the human eye, while smaller minute color differences are given less weight on the basis functions.
 
 The problem arises that the DCT has converted the original byte-aligned integer values into complex numbers, many of which are irrational and all of which take up significantly more space.
-Not only does this temporarily bloat the data from one byte per pixel to four bytes per pixel, it also makes it very unlikely for any data points to be shared across pixels to be compressed using a tradional compression method.
+Not only does this temporarily bloat the data from one byte per pixel to four bytes per pixel, it also makes it very unlikely for any data points to be shared across pixels to be compressed using a traditional compression method.
 To solve this issue, JPEG uses a Quantization step to better prepare the data for compression.
 
 
@@ -219,7 +219,7 @@ While the most direct way of preparing the matrix for compression would be to re
 Instead, the quantization step will aim to collapse nearby values so that as many data points become zero or close to zero as possible.
 Rather than scaling everything uniformly, JPEG instead opts to use precalculated quantization matrices that are shipped with the file format itself rather than calculated on the fly.
 Because of this, JPEG gives the user the option to choose which matrix to use, and in turn what ratio of compression-to-quality they desire for their usecase.
-The user can chose a quality from 1 to 100, with 1 returing a matrix with the poorest quality but the highest ratio of compression, and 100 returning a matrix with the highest quality but smallest improvement in filesize.
+The user can chose a quality from 1 to 100, with 1 returning a matrix with the poorest quality but the highest ratio of compression, and 100 returning a matrix with the highest quality but smallest improvement in filesize.
 A quality of 50 would be a matrix that renders both a high quality resulting image and good footprint reduction.
 The quantization matrix for a quality level of 50 is:
 
@@ -290,7 +290,7 @@ Resulting in the following matrix:
 This matrix is exceedingly simple compared to the previous steps, with large swaths of data (when viewed in the order defined by Figure~\ref{fig:dct_order}) sharing idential or zero values.
 This makes the weights much easier to compress using traditional compression methods, as will be done in the next step.
 At the same time, the quantization step reduces the operating range of the data, bringing the data closer together by closing the gaps between the points.
-Both of these points make this resulting matrix a much cleaner and more easily compressable set of data compared to the raw input from before, at the cost of losing any data that was rounded off after the quantization step.
+Both of these points make this resulting matrix a much cleaner and more easily compressible set of data compared to the raw input from before, at the cost of losing any data that was rounded off after the quantization step.
 
 \section{Compression}
 \label{sec: compression}
@@ -313,9 +313,9 @@ First, the data is read in the zig-zag pattern described before.
   \end{matrix}
 \end{align*}
 
-Now that the data is in a more managable order, Huffman encoding is used to comrpess the data by frequency.
+Now that the data is in a more manageable order, Huffman encoding is used to compress the data by frequency.
 The details of this process will not be discussed in this essay, but the basics are that the data points that have the greatest frequency (such as zeros or ones in the example matrix), are represented by codes that take the least amount of space, while data that is infrequent, such as the number 4 which appears only once, are assigned codes that take more space.
-This allows large parts of data, and expecially chunks of repeated data such as the zeros found at the end of the array, to be represented using minimal data in the compressed file which can be expanded back to it's full size.
+This allows large parts of data, and especially chunks of repeated data such as the zeros found at the end of the array, to be represented using minimal data in the compressed file which can be expanded back to it's full size.
 This matrix, uncompressed, takes up 1150 bytes of space.
 After running a Huffman encoder, the matrix takes only 363 bytes -- only 32\% as before.
 
@@ -394,7 +394,7 @@ And compared to the original matrix \eqref{eqn:original}:
 
 The uncompressed version is incredibly similar considering nearly 60\% of the DCT coefficients were turned into zeros during compression.
 Given the fact these results will be seen across every 8x8 pixel block in the original image, it becomes clear how so much space can be saved.
-Even the small discrepencies between the original and uncompressed matricies are hardly consequential; with a range of 256 intensity values for each pixel, a difference of 10 (about 3\%) is nearly indistiguishable to the human eye.
+Even the small discrepancies between the original and uncompressed matrices are hardly consequential; with a range of 256 intensity values for each pixel, a difference of 10 (about 3\%) is nearly indistinguishable to the human eye.
 
 To visualize this, Figure~\ref{fig:original} shows the original image, while Figure~\ref{fig:compressed} shows the image compressed at a quality level of 50.
 Though the image is clearly recognizable and obviously still relatively high in quality, it is by no means perfect.
@@ -418,10 +418,10 @@ Though the image is clearly recognizable and obviously still relatively high in 
 \section{Conclusion}
 \label{sec: conclusion}
 
-While the image was compressed by 40\% in file size, the compression is by not perfect, as evidenced by noticable artifacts around the edges of the mountain.
+While the image was compressed by 40\% in file size, the compression is by not perfect, as evidenced by noticeable artifacts around the edges of the mountain.
 This makes sense when reviewing how JPEG compressing images.
 Because the algorithm processes the data in 8x8 chunks and smooths out the data, the algorithm struggles with hard edges or areas where color changes sharply.
-This is expecially noticable near the peak of the mountain where one can plainly see where each of the 8x8 chunks are.
+This is especially noticeable near the peak of the mountain where one can plainly see where each of the 8x8 chunks are.
 However, while looking around at the rest of the image, nothing stands too far out of the ordinary.
 When looking at the broad sides of the mountain or at the sky, other than a general loss in detail, the image looks outstanding for how much actual data is spared.
 
@@ -430,7 +430,6 @@ When looking at the broad sides of the mountain or at the sky, other than a gene
 
 \begingroup
   \raggedright
-
   \nocite{*}
   \bibliographystyle{unsrtnat}
   \bibliography{bibliography}
