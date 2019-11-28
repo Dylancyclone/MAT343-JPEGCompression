@@ -22,8 +22,8 @@
 
 \section{Introduction}
 
-[Some fancy opening about how data is integral to the information age]
-As with everything else, data costs money to store and transfer.
+As the Information Age brings the world to generate and analysize as much data as it possibly can, it comes as no suprise that data has become one of the world's most valuble resources. 
+Though, as with everything else, data costs money to store and transfer.
 Whether one is looking to store a file on their computer or send an image through the internet, it is often in everyone’s best interest to use as little storage space and bandwidth as possible while still maintaining quality.
 This is achieved through compression, a method of reducing the footprint of data by reducing the number of bits needed to represent the data.
 Compression methods can be divided into two main categories: lossless and lossy.
@@ -40,7 +40,7 @@ Whether that be detail in an image, or the processing power required to decompre
 
 Specifically, Joint Photographic Experts Group (JPEG) is a lossy compression algorithm that is widely used for images on the Internet.
 The entire process that JPEG uses to compress images will be covered in detail, but one of JPEG’s most predominant features is a variable compression ratio.
-Most compression methods run at predefined or dynamically generated ratios, making it impossible for a user to choose how compressed they want their data to be.
+Most compression methods run at predefined or automatically generated ratios based on the content of the data, making it impossible for a user to choose how compressed they want their data to be.
 Because of this, and the algorithm’s efficiency and speed, JPEG has become a standard for digital images.
 
 
@@ -74,7 +74,7 @@ This is done to break up the work into smaller chunks to be processed individual
 8x8 chunks are used because blocks of that size often do not have much variance between pixels, and even in larger pictures, these small chunks usually strike the balance between compression ratio and visible artifacts.
 This paper will look at the process of compressing one of these blocks, as each block is processed using the same compression method before being stitched back together.
 
-One of the blocks, highlighted in green in above, is shown in detail below.
+One of the blocks, highlighted in green in above near the peak of the mountain, is shown in detail below.
 This is converted into a matrix where each value corresponds to the brightness of the pixel from 0 to 255.
 
 \begin{equation}
@@ -140,7 +140,7 @@ This is achieved using the following function:
 
 \begin{equation}
   \label{eqn:dct}
-  X_{u,v} = \alpha(u) \alpha(v) \sum_{x=0}^{7} \sum_{y=0}^{7} g_{x,y} cos \left [  \frac{(2x+1)u\pi}{16} \right ] cos \left [  \frac{(2y+1)u\pi}{16} \right ]
+  X_{u,v} = \alpha(u) \alpha(v) \sum_{x=0}^{7} \sum_{y=0}^{7} p_{x,y} cos \left [  \frac{(2x+1)u\pi}{16} \right ] cos \left [  \frac{(2y+1)u\pi}{16} \right ]
 \end{equation}
 
 Where,
@@ -152,7 +152,7 @@ Where,
     \frac{1}{\sqrt{2}} & \text{if } u=0 \\ 
     1 &  \text{otherwise}
   \end{matrix}\right. \text{ is a normalizing scale factor to make the result orthonormal} \\
-  &g_{x,y} \text{ is the pixel intensity at the coordinates (x,y)} \\
+  &p_{x,y} \text{ is the pixel intensity at the coordinates (x,y)} \\
   &X_{u,v} \text{ is the DCT coefficient at the coordinates (u,v)} \\
 \end{align*}
 
@@ -238,6 +238,8 @@ The quantization matrix for a quality level of 50 is:
 \end{equation}
 
 When choosing another level of quality, this matrix is scaled to reflect the level of compression.
+For a quality level greater than 50, the base quantization matrix is multiplied by $\frac{100-quality ~level}{50}$.
+For a quality level less than 50, the base quantization matrix is multiplied by $\frac{50}{quality ~level}$.
 For example, the quantization matricies for a quality level of 10 and 90 would be:
 
 \begin{align*}
@@ -317,7 +319,7 @@ Now that the data is in a more manageable order, Huffman encoding is used to com
 The details of this process will not be discussed in this essay, but the basics are that the data points that have the greatest frequency (such as zeros or ones in the example matrix), are represented by codes that take the least amount of space, while data that is infrequent, such as the number 4 which appears only once, are assigned codes that take more space.
 This allows large parts of data, and especially chunks of repeated data such as the zeros found at the end of the array, to be represented using minimal data in the compressed file which can be expanded back to it's full size.
 This matrix, uncompressed, takes up 1150 bytes of space.
-After running a Huffman encoder, the matrix takes only 363 bytes -- only 32\% as before.
+After running a Huffman encoder, the matrix takes only 363 bytes --- only 32\% as before.
 
 Once the algorithm has finished processing one chunk of the image, it moves on to the next in sequence.
 Because each 8x8 part of the image is treated individually, the exact same process is repeated without deviation until each chunk is compressed and stitched back together.
@@ -335,7 +337,6 @@ First, the Huffman encoding is reversed by simply undoing the encoding process, 
   \label{eqn:decompression}
   R_{i,j} = Q_{50i,j} \times Y_{i,j}
 \end{equation}
-\newpage
 
 To result in:
 
@@ -409,7 +410,7 @@ Though the image is clearly recognizable and obviously still relatively high in 
   \end{minipage}\hfill
   \begin{minipage}{0.45\textwidth}
       \centering
-      \includegraphics[width=0.9\textwidth]{./images/compressed.jpg}
+      \includegraphics[width=0.9\textwidth]{./images/compressed50.jpg}
       \caption{Compressed Image}
       \label{fig:compressed}
   \end{minipage}
@@ -427,6 +428,33 @@ When looking at the broad sides of the mountain or at the sky, other than a gene
 
 \section{Further Examples}
 \label{sec: furtherexamples}
+
+\begin{align*}
+  \centering
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{./images/original.jpg}
+      Original - 36.1kb
+  \end{minipage}\hfill
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{./images/compressed50.jpg}
+      Compressed 50\% Quality - 21.9kb
+  \end{minipage}
+\end{align*}
+\begin{align*}
+  \centering
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{./images/compressed100.jpg}
+      Compressed 100\% Quality - 23.6kb
+  \end{minipage}\hfill
+  \begin{minipage}{0.45\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{./images/compressed1.jpg}
+      Compressed 1\% Quality - 3.5kb
+  \end{minipage}
+\end{align*}
 
 \begingroup
   \raggedright
